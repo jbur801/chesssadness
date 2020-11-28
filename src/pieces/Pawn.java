@@ -29,7 +29,7 @@ public class Pawn extends Piece{
         if(!hasmoved){
             limit =2;
         }
-        super.attemptTraverse(0,limit);
+        //super.attemptTraverse(0,limit);
         return moves;
     }
 

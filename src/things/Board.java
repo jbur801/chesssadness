@@ -21,6 +21,12 @@ public class Board {
         for(int i =0;i<8;i++){
             for(int j =0;j<8;j++){
                 squares[i][j] = new GridSquare(i,j,this);
+                squares[i][j].setColour((i+j)%2);
+            }
+        }
+        for(int i =0;i<8;i++){
+            for(int j =0;j<8;j++){
+                squares[i][j].setNeighbours();
             }
         }
         black = new Player(Colour.BLACK);
@@ -65,23 +71,24 @@ public class Board {
 
     public void printState(){
         StringBuilder sb = new StringBuilder();
-        sb.append("BOARD\n-------------\n  A B C D E F G H\n");
+        sb.append("BOARD\n-------------\n  A  B  C  D  E  F  G  H\n");
         for(int i =7;i>=0;i--){
             char c = (char)(i+65);
-            sb.append(i+1);
+            sb.append((i+1)+"");
 
             for(int j =0;j<8;j++){
-                sb.append(" ");
                 sb.append(squares[i][j].output());
             }
             sb.append("\n");
         }
+        sb.append("BOARD\n-------------\n  A  B  C  D  E  F  G  H\n");
         sb.append(white.liveString());
         System.out.println(sb);
     }
 
     public GridSquare getSquare(int xpos, int ypos) {
-        return squares[ypos][xpos];
+        try{ return squares[ypos][xpos];}
+        catch(IndexOutOfBoundsException e){ return null; }
     }
 
     private static Piece getPiece(String datum,Player player) {
@@ -100,5 +107,19 @@ public class Board {
                 return new King(player);
         }
         return null;
+    }
+
+    public void play(){
+        Player activePlayer = white;
+        Player inactivePlayer = black;
+        Player buffer;
+        while(true){
+            printState();
+            activePlayer.liveString();
+            activePlayer.move();
+            buffer=activePlayer;
+            activePlayer=inactivePlayer;
+            inactivePlayer=buffer;
+        }
     }
 }

@@ -6,5 +6,6 @@ public class Main {
         board.printState();
         board.init();
         board.printState();
+        board.play();
     }
 }

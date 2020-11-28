@@ -23,5 +23,5 @@ public class Colours {
     public static final String WHITE_BACKGROUND = "\033[47m";  // WHITE
 
 
-    public static final String RESET = "\033[0m";  // Text Reset
+        public static final String RESET = "\033[0m";  // Text Reset
 }

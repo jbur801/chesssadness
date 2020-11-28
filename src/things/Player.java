@@ -37,16 +37,38 @@ public class Player {
         boolean success = false;
         Scanner input = new Scanner(System.in);
         while(success == false) {
+            Piece piece=null;
+            while(piece == null){
+                System.out.println("pik ur piece");
+                String inputRegex = "[-]{0,1}[12345678]{1,2}";//TODO 2 electric boogaloo
+                //TODO may break me
+                int id = Integer.parseInt(input.nextLine());
+                for(Piece livePiece:livePieces){
+                    if(livePiece.is(id)){
+                        piece=livePiece;
+                    }
+                }
+            }
+            System.out.println("Selected piece: " + piece.toFullString());
             System.out.println("make ur move");
-            String move = input.nextLine();
-            if(move.matches());
+            System.out.println("x:");
+            int x = Integer.parseInt(input.nextLine());
+            System.out.println("y:");
+            int y = Integer.parseInt(input.nextLine());
+
+            success=piece.move(x,y);
+            if(!success){
+                System.out.println("NO");
+            }
         }
+
     }
 
     public void killPiece(Piece piece){
         livePieces.remove(piece);
         deadPieces.add(piece);
     }
+
 
     public Colour getColour(){
         return colour;

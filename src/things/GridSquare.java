@@ -6,7 +6,7 @@ import pieces.Piece;
 
 public class GridSquare {
     private final Board board;
-    private Piece piece;
+    private Piece piece = null;
     private boolean occupied;
     private GridSquare left;
     private GridSquare right;
@@ -14,11 +14,12 @@ public class GridSquare {
     private GridSquare down;
     private int xpos;
     private int ypos;
+    private String colour;
     public GridSquare(int i,int j,Board board){
         occupied = false;
         this.board = board;
-        xpos = i;
-        ypos = j;
+        xpos = j;
+        ypos = i;
     }
 
     @Override
@@ -30,8 +31,8 @@ public class GridSquare {
     public void setNeighbours(){
         left = board.getSquare(xpos-1,ypos);
         right = board.getSquare(xpos+1,ypos);
-        up = board.getSquare(xpos,ypos-1);
-        down = board.getSquare(xpos,ypos+1);
+        up = board.getSquare(xpos,ypos+1);
+        down = board.getSquare(xpos,ypos-1);
     }
 
     public boolean containsPiece(){
@@ -45,19 +46,27 @@ public class GridSquare {
         return piece.isColour(color);
     }
 
-    public void moveHere(Piece newPiece){
+    public boolean moveHere(Piece newPiece){
         if(piece ==null){
             occupied=true;
-            piece = newPiece;
-        }else {
+        }else if(!piece.isColour(newPiece.getColour())){
             piece.taken();
-            piece = newPiece;
+        }else{
+            System.out.println(piece.toFullString());
+            System.out.println(this.xpos + " " + this.ypos);
+            return false;
+        }
+        piece = newPiece;
+        GridSquare wah = newPiece.getCurrentSquare();
+        if(wah!= null){
+            wah.empty();
         }
         newPiece.setCurrentSquare(this);
-        System.out.println(piece);
+        return true;
     }
 
-    protected GridSquare attemptTraverse(Direction direction,Colour color) {
+
+    private GridSquare getNeighbour(Direction direction){
         GridSquare newSquare;
         switch(direction){
             case UP:
@@ -75,10 +84,18 @@ public class GridSquare {
             default:
                 newSquare=null;
         }
+        return newSquare;
+    }
+    //private GridSquare ree(getSquare)
+
+    protected GridSquare attemptTraverse(Direction direction,Colour color) {
+        GridSquare newSquare = getNeighbour(direction);
+
         //TODO CARE BUG ALERT
-        if(newSquare!=null & newSquare.legal(color)){
-            return newSquare;
+        if(!newSquare.legal(color)){
+            newSquare =null;
         }
+        return newSquare;
     }
 
     private boolean legal(Colour color) {
@@ -87,9 +104,41 @@ public class GridSquare {
     }
 
     public String output(){
+        String content = "   ";
         if(occupied){
-            return piece.toString();
+            return piece.getFont() +colour+ " " + piece.toString() + " " + Colours.RESET;
         }
-        return "*";
+        return colour + content + Colours.RESET;
+    }
+
+
+    public void setColour(int i) {
+        if(i ==0){
+            colour = Colours.PURPLE_BACKGROUND;
+        }
+        else{
+            colour = Colours.YELLOW_BACKGROUND;
+        }
+    }
+
+
+    public GridSquare traverse(int d, Direction direction) {
+        GridSquare next = getNeighbour(direction);
+        System.out.println(next.toString());
+
+        if(d>0){
+            d--;
+            try{return next.traverse(d,direction);}
+            catch(NullPointerException e){
+                System.out.println("Traverse: " + d);
+                return null;
+            }
+        }
+        return this;
+    }
+
+    public void empty() {
+        piece=null;
+        occupied=false;
     }
 }
